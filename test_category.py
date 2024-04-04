@@ -9,7 +9,7 @@ class TestCategory:
             Category()
 
     def test_name_must_have_less_than_255_characters(self):
-        with pytest.raises(ValueError, match="name must have less than 256 characters"):
+        with pytest.raises(ValueError, match="name cannot be longer than 255"):
             Category(name="a" * 256)
 
     def test_category_must_be_created_with_id_as_uuid(self):
@@ -59,3 +59,24 @@ class TestCategory:
             is_active=False
         )
         assert repr(category) == f"<Category {name} ({cat_id})>"
+
+class TestUpdateCategory:
+    def test_update_category_with_name_and_description(self):
+        category = Category(name="Filme",description="Filmes em Geral")
+
+        assert category.name == "Filme"
+        assert category.description == "Filmes em Geral"
+
+        category.update_category(name="Filmes de Acção", description="Filmes muito movimentados")
+        
+        assert category.name == "Filmes de Acção"
+        assert category.description == "Filmes muito movimentados"
+
+    def test_update_category_with_invalid_name(self):
+        category = Category(name="Filme",description="Filmes em Geral")
+
+        assert category.name == "Filme"
+        assert category.description == "Filmes em Geral"
+
+        with pytest.raises(ValueError, match="name cannot be longer than 255"):
+            category.update_category(name="a" * 256, description="Filmes muito fixe")

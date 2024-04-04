@@ -59,6 +59,10 @@ class TestCategory:
             is_active=False
         )
         assert repr(category) == f"<Category {name} ({cat_id})>"
+    
+    def test_cannot_create_category_with_empty_name(self):
+        with pytest.raises(ValueError, match="name cannot be empty"):
+            Category(name="")
 
 class TestUpdateCategory:
     def test_update_category_with_name_and_description(self):
@@ -72,7 +76,7 @@ class TestUpdateCategory:
         assert category.name == "Filmes de Acção"
         assert category.description == "Filmes muito movimentados"
 
-    def test_update_category_with_invalid_name(self):
+    def test_update_category_with_invalid_name_raises_exception(self):
         category = Category(name="Filme",description="Filmes em Geral")
 
         assert category.name == "Filme"
@@ -80,3 +84,12 @@ class TestUpdateCategory:
 
         with pytest.raises(ValueError, match="name cannot be longer than 255"):
             category.update_category(name="a" * 256, description="Filmes muito fixe")
+
+    def test_update_category_with_empty_name(self):
+        category = Category(name="Filme",description="Filmes em Geral")
+
+        assert category.name == "Filme"
+        assert category.description == "Filmes em Geral"
+
+        with pytest.raises(ValueError, match="name cannot be empty"):
+            category.update_category(name="", description="Filmes muito fixe")

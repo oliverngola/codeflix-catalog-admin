@@ -17,6 +17,9 @@ class Category:
     def validate(self):
         if len(self.name) > 255:
             raise ValueError("name cannot be longer than 255")
+        
+        if not self.name:
+            raise ValueError("name cannot be empty")
 
     def __str__(self):
         return f"{self.name} - {self.description} {self.is_active}" 

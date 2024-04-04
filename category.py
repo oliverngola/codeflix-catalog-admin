@@ -1,17 +1,14 @@
+from dataclasses import dataclass, field
 import uuid
 
+@dataclass
 class Category:
-    def __init__(
-        self, 
-        name, 
-        id = "", 
-        description = "", 
-        is_active= True
-    ):
-        self.id = id or uuid.uuid4() 
-        self.name = name
-        self.description = description
-        self.is_active = is_active
+    name: str
+    description: str = ""
+    is_active: bool = True
+    id: uuid.UUID = field(default_factory=uuid.uuid4)
+
+    def __post_init__(self):
         self.validate()
 
     def validate(self):

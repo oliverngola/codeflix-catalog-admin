@@ -7,7 +7,7 @@ from src.core.category.application.use_cases.create_category import CreateCatego
 from src.core.category.application.use_cases.exceptions import InvalidCategoryData
 
 
-class TestCreateCategory:
+class TestUnitCreateCategory:
 	def test_create_category_with_valid_data(self):
 		mock_repository = MagicMock(CategoryRepository)
 		use_case = CreateCategory(repository=mock_repository)

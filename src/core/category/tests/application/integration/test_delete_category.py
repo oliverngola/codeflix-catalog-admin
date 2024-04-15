@@ -1,13 +1,13 @@
 import uuid, pytest
 
 from src.core.category.application.use_cases.exceptions import CategoryNotFound
-from src.core.category.application.use_cases.get_category import GetCategory, GetCategoryRequest, GetCategoryResponse
+from src.core.category.application.use_cases.delete_category  import DeleteCategory, DeleteCategoryRequest
 from src.core.category.domain.category import Category
 from src.core.category.infra.in_memory_category_repository import InMemoryCategoryRepository
 
 
-class TestGetCategory:
-    def test_category_get_by_id(self):
+class TestDeleteCategory:
+    def test_delete_category_from_repository(self):
         category_filme = Category(
             name="Filmes",
             description="Categoria para filmes",
@@ -18,19 +18,18 @@ class TestGetCategory:
             description="Categoria para serie",
             is_active=True
         )
-
         repository = InMemoryCategoryRepository(categories=[category_filme, category_serie])
-        use_case = GetCategory(repository=repository)
-        request = GetCategoryRequest(id=category_filme.id)
-        
-        response = use_case.execute(request)
 
-        assert response == GetCategoryResponse(
-            id=category_filme.id,
-            name=category_filme.name,
-            description=category_filme.description,
-            is_active=category_filme.is_active
-        )
+        use_case = DeleteCategory(repository=repository)
+        request = DeleteCategoryRequest(id=category_filme.id)
+        
+        assert repository.get_by_id(category_filme.id) is not None
+        response = use_case.execute(request)
+               
+        assert repository.get_by_id(category_filme.id) is None
+        assert response is None
+        assert len(repository.categories) == 1
+
 
     def test_when_category_does_not_exit_then_raise_exception(self):
         category_filme = Category(
@@ -45,9 +44,9 @@ class TestGetCategory:
         )
 
         repository = InMemoryCategoryRepository(categories=[category_filme, category_serie])
-        use_case = GetCategory(repository=repository)
+        use_case = DeleteCategory(repository=repository)
         not_found_id = uuid.uuid4()
-        request = GetCategoryRequest(id=not_found_id)
+        request = DeleteCategoryRequest(id=not_found_id)
 
         with pytest.raises(CategoryNotFound) as exc:
             use_case.execute(request)

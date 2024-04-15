@@ -14,3 +14,8 @@ class InMemoryCategoryRepository(CategoryRepository):
 
     def save(self, category) -> None:  
         self.categories.append(category)
+
+    def delete(self, id: UUID) -> None:
+        category = self.get_by_id(id)
+        self.categories.remove(category)
+        return None

@@ -77,6 +77,38 @@ class TestDelete:
         assert repository.categories[0] == category_serie
 
 
+class TestGetById:
+    def test_list_categories(self):
+        category_filme = Category(
+            name="Filme",
+            description="Categoria para filmes",
+        )
+        category_serie = Category(
+            name="Série",
+            description="Categoria para séries",
+        )
+        repository = InMemoryCategoryRepository(
+            categories=[
+                category_filme,
+                category_serie,
+            ]
+        )
+
+        category = repository.list()
+
+        assert len(category) == 2
+
+    def test_list_empty_categories(self):
+        repository = InMemoryCategoryRepository(
+            categories=[]
+        )
+
+        category = repository.list()
+
+        assert len(category) == 0
+
+
+
 class TestUpdate:
     def test_update_category(self):
         category_filme = Category(

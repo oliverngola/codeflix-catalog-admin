@@ -18,4 +18,3 @@ class DeleteCategory:
         if category is None:
             raise CategoryNotFound(f"Category with {request.id} not found")
         self.repository.delete(id=category.id)
-        return None

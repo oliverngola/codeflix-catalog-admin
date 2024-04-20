@@ -3,7 +3,7 @@ from src.core.category.domain.category import Category
 from src.core.category.infra.in_memory_category_repository import InMemoryCategoryRepository
 
 
-class TestInMemoryCategoryRepository:
+class TestSave:
     def test_can_save_category(self):
         repository = InMemoryCategoryRepository()
         category = Category(
@@ -75,3 +75,41 @@ class TestDelete:
 
         assert len(repository.categories) == 1
         assert repository.categories[0] == category_serie
+
+
+class TestUpdate:
+    def test_update_category(self):
+        category_filme = Category(
+            name="Filme",
+            description="Categoria para filmes",
+        )
+        category_serie = Category(
+            name="Série",
+            description="Categoria para séries",
+        )
+        repository = InMemoryCategoryRepository(
+            categories=[
+                category_filme,
+                category_serie,
+            ]
+        )
+
+        category_filme.name = "Filmes"
+        category_filme.description = "Categoria para filmes e séries"
+        repository.update(category_filme)
+
+        assert len(repository.categories) == 2
+        updated_category = repository.get_by_id(category_filme.id)
+        assert updated_category.name == "Filmes"
+        assert updated_category.description == "Categoria para filmes e séries"
+
+    def test_update_non_existent_category_does_not_raise_exception(self):
+        repository = InMemoryCategoryRepository(categories=[])
+
+        category = Category(
+            name="Documentário",
+            description="Categoria para documentários",
+        )
+        repository.update(category)
+
+        assert len(repository.categories) == 0

@@ -6,11 +6,11 @@ from src.core.category.domain.category import Category
 
 class CategoryRepository(ABC):
     @abstractmethod
-    def get_by_id(self, id) -> Category:
+    def get_by_id(self, id) -> Category | None:
         raise NotImplementedError
 
     @abstractmethod
-    def save(self, category) -> None:
+    def save(self, category: Category) -> None:
         raise NotImplementedError
     
     @abstractmethod

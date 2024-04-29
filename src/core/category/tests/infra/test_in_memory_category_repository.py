@@ -77,7 +77,7 @@ class TestDelete:
         assert repository.categories[0] == category_serie
 
 
-class TestGetById:
+class TestList:
     def test_list_categories(self):
         category_filme = Category(
             name="Filme",

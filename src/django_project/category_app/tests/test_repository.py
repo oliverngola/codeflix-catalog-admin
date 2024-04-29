@@ -41,7 +41,10 @@ class TestGetById:
 
         category = repository.get_by_id(category_filme.id)
 
-        assert category == category_filme
+        assert category.id == category_filme.id
+        assert category.name == category_filme.name
+        assert category.description == category_filme.description
+        assert category.is_active == category.is_active
 
     def test_when_category_does_not_exists_should_return_none(self):
         category_filme = Category(
@@ -79,7 +82,7 @@ class TestDelete:
 
 
 @pytest.mark.django_db
-class TestGetById:
+class TestList:
     def test_list_categories(self):
         category_filme = Category(
             name="Filme",

@@ -25,7 +25,7 @@ def category_repository() -> DjangoORMCategoryRepository:
 
 
 @pytest.mark.django_db
-class TestCategoryAPI:
+class TestListAPI:
     def test_list_categories(
         self,
         category_movie: Category,
@@ -38,28 +38,30 @@ class TestCategoryAPI:
         url = '/api/categories/'
         response = APIClient().get(url)
 
-        expected_data = [
-            {
-                "id": str(category_movie.id),
-                "name": "Movie",
-                "description": "Movie description",
-                "is_active": True
-            },
-            {
-                "id": str(category_documentary.id),
-                "name": "Documentary",
-                "description": "Documentary description",
-                "is_active": True
-            }
-        ]
+        expected_data = {
+            "data": [
+                {
+                    "id": str(category_movie.id),
+                    "name": "Movie",
+                    "description": "Movie description",
+                    "is_active": True
+                },
+                {
+                    "id": str(category_documentary.id),
+                    "name": "Documentary",
+                    "description": "Documentary description",
+                    "is_active": True
+                }
+            ]
+        }
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2
+        assert len(response.data["data"]) == 2
         assert response.data == expected_data
 
 
 @pytest.mark.django_db
-class TestRetrieveAPi:
+class TestRetrieveAPI:
     def test_when_id_is_invalid_return_400(
         self,
         category_movie: Category,
@@ -84,10 +86,12 @@ class TestRetrieveAPi:
         response = APIClient().get(url)
 
         expected_data = {
-            "id": str(category_documentary.id),
-            "name": "Documentary",
-            "description": "Documentary description",
-            "is_active": True
+            "data":  {
+                "id": str(category_documentary.id),
+                "name": "Documentary",
+                "description": "Documentary description",
+                "is_active": True
+            }
         }
 
         assert response.status_code == status.HTTP_200_OK

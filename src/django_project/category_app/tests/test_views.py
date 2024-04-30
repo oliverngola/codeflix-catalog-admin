@@ -1,3 +1,4 @@
+import uuid
 import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -107,3 +108,47 @@ class TestRetrieveAPI:
         response = APIClient().get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestCreateAPI:
+    def test_when__payload_is_invalid_return_400(self) -> None:
+        url = f'/api/categories/'
+        response = APIClient().post(
+            url,
+            data={
+                "name": "",
+                "description": "Documentary description"
+            }
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_when__payload_is_valid_then_create_category_and_return_201(
+        self,
+        category_repository: DjangoORMCategoryRepository,
+    ) -> None:
+        url = f'/api/categories/'
+        response = APIClient().post(
+            url,
+            data={
+                "name": "Documentary",
+                "description": "Documentary description"
+            }
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        created_category_id = uuid.UUID(response.data["id"])
+        assert category_repository.get_by_id(created_category_id) == Category(
+            id=created_category_id,
+            name="Documentary",
+            description="Documentary description"
+        )
+
+        assert category_repository.list() == [
+            Category(
+                id=uuid.UUID(response.data["id"]),
+                name="Documentary",
+                description="Documentary description"
+            )
+        ]

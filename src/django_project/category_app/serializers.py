@@ -30,10 +30,10 @@ class CreateCategoryResponseSerializer(serializers.Serializer):
 
 
 class UpdateCategoryRequestSerializer(serializers.Serializer):
-    id = serializers.UUIDField()
-    name = serializers.CharField(max_length=255, allow_blank=False)
-    description = serializers.CharField()
-    is_active = serializers.BooleanField()
+    id = serializers.UUIDField(required=True)
+    name = serializers.CharField(required=True, allow_blank=False)
+    description = serializers.CharField(required=True, allow_blank=False, allow_null=False)
+    is_active = serializers.BooleanField(required=True)
 
 
 class DeleteCategoryRequestSerializer(serializers.Serializer):

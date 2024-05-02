@@ -214,6 +214,94 @@ class TestUpdateAPI:
 
 
 @pytest.mark.django_db
+class TestPartialUpdateAPI:
+    def test_when_category_does_not_exist(self) -> None:
+        url = f'/api/categories/{uuid.uuid4()}/'
+
+        response = APIClient().patch(
+            url,
+            data={
+                "name": "Movie",
+                "description": "Movie description",
+                "is_active": False
+            }
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_when_payload_is_invalid_return_400(self) -> None:
+        url = f'/api/categories/12345677/'
+        response = APIClient().patch(
+            url,
+            data={
+                "name": "",
+                "description": "Documentary description"
+            }
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {
+            "name": ["This field may not be blank."],
+            "id": ["Must be a valid UUID."]
+        }
+
+    @pytest.mark.parametrize(
+        "payload,expected_category_dict",
+        [
+            (
+                {
+                    "name": "Not Movie",
+                },
+                {
+                    "name": "Not Movie",
+                    "description": "Movie description",
+                    "is_active": True,
+                },
+            ),
+            (
+                {
+                    "description": "Another description",
+                },
+                {
+                    "name": "Movie",
+                    "description": "Another description",
+                    "is_active": True,
+                },
+            ),
+            (
+                {
+                    "is_active": False,
+                },
+                {
+                    "name": "Movie",
+                    "description": "Movie description",
+                    "is_active": False,
+                },
+            ),
+        ],
+    )
+    def test_when_payload_is_valid_then_update_category_and_return_204(
+        self,
+        payload: dict,
+        expected_category_dict: dict,
+        category_movie: Category,
+        category_repository: DjangoORMCategoryRepository
+    ) -> None:
+        category_repository.save(category_movie)
+
+        url = f'/api/categories/{category_movie.id}/'
+        response = APIClient().patch(url, data=payload)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not response.data
+        updated_category = category_repository.get_by_id(category_movie.id)
+
+        assert updated_category.name == expected_category_dict["name"]
+        assert updated_category.description == expected_category_dict["description"]
+        assert updated_category.is_active == expected_category_dict["is_active"]
+
+
+@pytest.mark.django_db
 class TestDeleteAPI:
     def test_when_id_is_invalid_return_400(
         self,

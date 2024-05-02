@@ -98,7 +98,7 @@ class TestRetrieveAPI:
         assert response.status_code == status.HTTP_200_OK
         assert response.data == expected_data
 
-    def test_return_404_when_exits(
+    def test_when_category_does_exist_return_404(
         self,
         category_movie: Category,
         category_documentary: Category,
@@ -209,5 +209,42 @@ class TestUpdateAPI:
                 "is_active": False
             }
         )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestDeleteAPI:
+    def test_when_id_is_invalid_return_400(
+        self,
+        category_movie: Category,
+        category_documentary: Category,
+        category_repository: DjangoORMCategoryRepository,
+    ) -> None:
+        url = f'/api/categories/1234567/'
+        response = APIClient().delete(url)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_return_category_when_exits(
+        self,
+        category_documentary: Category,
+        category_repository: DjangoORMCategoryRepository,
+    ) -> None:
+        category_repository.save(category_documentary)
+
+        url = f'/api/categories/{category_documentary.id}/'
+        response = APIClient().delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert category_repository.get_by_id(category_documentary.id) is None
+        assert category_repository.list() == []
+
+    def test_when_category_does_exist_return_404(
+        self,
+        category_documentary: Category
+    ) -> None:
+        url = f'/api/categories/{category_documentary.id}/'
+        response = APIClient().delete(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND

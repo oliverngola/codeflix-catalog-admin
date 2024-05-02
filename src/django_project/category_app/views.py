@@ -1,3 +1,4 @@
+from uuid import UUID
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -40,7 +41,7 @@ class CategoryViewSet(viewsets.ViewSet):
 
         return Response(status=HTTP_200_OK, data=serializer.data)
     
-    def retrieve(self, request: Request, pk=None) -> Response:
+    def retrieve(self, request: Request,  pk: UUID = None) -> Response:
         serializer = RetrieveCategoryRequestSerializer(data={"id": pk})
         serializer.is_valid(raise_exception=True)
         
@@ -66,13 +67,13 @@ class CategoryViewSet(viewsets.ViewSet):
         category_output = CreateCategoryResponseSerializer(instance=output)
         return Response(status=HTTP_201_CREATED,data=category_output.data)
 
-    def update(self, request, pk=None) -> Response:
-        serializer = UpdateCategoryRequestSerializer(data={ **request.data.dict(), "id": pk})
+    def update(self, request,  pk: UUID = None) -> Response:
+        serializer = UpdateCategoryRequestSerializer(data={ **request.data, "id": pk})
         serializer.is_valid(raise_exception=True)
 
         input = UpdateCategoryRequest(**serializer.validated_data)
         use_case = UpdateCategory(repository=DjangoORMCategoryRepository())
-        
+
         try:
             use_case.execute(input)
         except CategoryNotFound:

@@ -39,3 +39,6 @@ class CreateGenre:
             )
         except ValueError as err:
             raise InvalidGenre(err)
+
+        self.repository.save(genre)
+        return self.Output(id=genre.id)

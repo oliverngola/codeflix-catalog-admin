@@ -31,4 +31,11 @@ class CreateGenre:
                 f"Categories not found: {input.category_ids - category_ids}"
             )
         
-
+        try:
+            genre = Genre(
+                name=input.name,
+                is_active=input.is_active,
+                categories=input.category_ids
+            )
+        except ValueError as err:
+            raise InvalidGenre(err)

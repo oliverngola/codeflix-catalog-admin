@@ -1,7 +1,7 @@
 import uuid, pytest
 
 from src.core.category.application.use_cases.exceptions import CategoryNotFound
-from src.core.category.application.use_cases.delete_category  import DeleteCategory, DeleteCategoryRequest
+from src.core.category.application.use_cases.delete_category  import DeleteCategory
 from src.core.category.domain.category import Category
 from src.core.category.infra.in_memory_category_repository import InMemoryCategoryRepository
 
@@ -21,13 +21,13 @@ class TestDeleteCategory:
         repository = InMemoryCategoryRepository(categories=[category_filme, category_serie])
 
         use_case = DeleteCategory(repository=repository)
-        request = DeleteCategoryRequest(id=category_filme.id)
+        input = DeleteCategory.Input(id=category_filme.id)
         
         assert repository.get_by_id(category_filme.id) is not None
-        response = use_case.execute(request)
+        output = use_case.execute(input)
                
         assert repository.get_by_id(category_filme.id) is None
-        assert response is None
+        assert output is None
         assert len(repository.categories) == 1
 
 
@@ -46,8 +46,8 @@ class TestDeleteCategory:
         repository = InMemoryCategoryRepository(categories=[category_filme, category_serie])
         use_case = DeleteCategory(repository=repository)
         not_found_id = uuid.uuid4()
-        request = DeleteCategoryRequest(id=not_found_id)
+        input = DeleteCategory.Input(id=not_found_id)
 
         with pytest.raises(CategoryNotFound) as exc:
-            use_case.execute(request)
+            use_case.execute(input)
 

@@ -4,31 +4,32 @@ from uuid import UUID
 from src.core.category.domain.category_repository import CategoryRepository
 from src.core.category.application.use_cases.exceptions import CategoryNotFound, InvalidCategory
 
-@dataclass
-class UpdateCategoryRequest:
-    id: UUID
-    name: str | None = None
-    description: str | None = None
-    is_active: bool | None = None
 
 class UpdateCategory:
     def __init__(self, repository: CategoryRepository):
         self.repository = repository
 
-    def execute(self, request: UpdateCategoryRequest) -> None:
-        category = self.repository.get_by_id(id=request.id)
+    @dataclass
+    class Input:
+        id: UUID
+        name: str | None = None
+        description: str | None = None
+        is_active: bool | None = None
+
+    def execute(self, input: Input) -> None:
+        category = self.repository.get_by_id(id=input.id)
         if category is None:
-            raise CategoryNotFound(f"Category with {request.id} not found")
+            raise CategoryNotFound(f"Category with {input.id} not found")
 
         try:
-            current_name = request.name if request.name is not None else category.name
-            current_description =  request.description if request.description is not None else category.description
+            current_name = input.name if input.name is not None else category.name
+            current_description =  input.description if input.description is not None else category.description
             category.update_category(name=current_name, description=current_description)
 
-            if request.is_active is True:
+            if input.is_active is True:
                 category.activate()
 
-            if request.is_active is False:
+            if input.is_active is False:
                 category.deactivate()
 
             category.update_category(name=current_name, description=current_description)

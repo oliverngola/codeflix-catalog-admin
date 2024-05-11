@@ -9,17 +9,12 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND
 )
 
-from src.core.category.application.use_cases.create_category import CreateCategory, CreateCategoryRequest
-from src.core.category.application.use_cases.delete_category import DeleteCategory, DeleteCategoryRequest
+from src.core.category.application.use_cases.create_category import CreateCategory
+from src.core.category.application.use_cases.delete_category import DeleteCategory
 from src.core.category.application.use_cases.exceptions import CategoryNotFound
-from src.core.category.application.use_cases.get_category import (
-    GetCategory,
-    GetCategoryRequest
-)
-from src.core.category.application.use_cases.list_category import (
-    ListCategory, 
-    ListCategoryRequest
-)
+from src.core.category.application.use_cases.get_category import GetCategory
+from src.core.category.application.use_cases.list_category import ListCategory
+from src.core.category.application.use_cases.update_category import UpdateCategory
 from django_project.category_app.repository import DjangoORMCategoryRepository
 from django_project.category_app.serializers import (
     CreateCategoryRequestSerializer,
@@ -30,11 +25,10 @@ from django_project.category_app.serializers import (
     RetrieveCategoryResponseSerializer,
     UpdateCategoryRequestSerializer
 )
-from src.core.category.application.use_cases.update_category import UpdateCategory, UpdateCategoryRequest
 
 class CategoryViewSet(viewsets.ViewSet):
     def list(self, request: Request) -> Response:
-        input = ListCategoryRequest()
+        input = ListCategory.Input()
 
         use_case = ListCategory(repository=DjangoORMCategoryRepository())
         output = use_case.execute(input)
@@ -50,7 +44,7 @@ class CategoryViewSet(viewsets.ViewSet):
         use_case = GetCategory(repository=DjangoORMCategoryRepository())
 
         try:
-            output = use_case.execute(GetCategoryRequest(id=serializer.validated_data["id"]))
+            output = use_case.execute(GetCategory.Input(id=serializer.validated_data["id"]))
         except CategoryNotFound:
             return Response(status=HTTP_404_NOT_FOUND)
 
@@ -64,7 +58,7 @@ class CategoryViewSet(viewsets.ViewSet):
 
         use_case = CreateCategory(repository=DjangoORMCategoryRepository())
         
-        output = use_case.execute(CreateCategoryRequest(**serializer.validated_data))
+        output = use_case.execute(CreateCategory.Input(**serializer.validated_data))
 
         category_output = CreateCategoryResponseSerializer(instance=output)
         return Response(status=HTTP_201_CREATED,data=category_output.data)
@@ -73,7 +67,7 @@ class CategoryViewSet(viewsets.ViewSet):
         serializer = UpdateCategoryRequestSerializer(data={ **request.data, "id": pk})
         serializer.is_valid(raise_exception=True)
 
-        input = UpdateCategoryRequest(**serializer.validated_data)
+        input = UpdateCategory.Input(**serializer.validated_data)
         use_case = UpdateCategory(repository=DjangoORMCategoryRepository())
 
         try:
@@ -90,10 +84,10 @@ class CategoryViewSet(viewsets.ViewSet):
         }, partial=True)
         serializer.is_valid(raise_exception=True)
 
-        input = UpdateCategoryRequest(**serializer.validated_data)
+        input = UpdateCategory.Input(**serializer.validated_data)
         use_case = UpdateCategory(repository=DjangoORMCategoryRepository())
         try:
-            use_case.execute(request=input)
+            use_case.execute(input)
         except CategoryNotFound:
             return Response(status=HTTP_404_NOT_FOUND)
 
@@ -103,7 +97,7 @@ class CategoryViewSet(viewsets.ViewSet):
         serializer = DeleteCategoryRequestSerializer(data={"id": pk})
         serializer.is_valid(raise_exception=True)
 
-        input = DeleteCategoryRequest(**serializer.validated_data)
+        input = DeleteCategory.Input(**serializer.validated_data)
         use_case = DeleteCategory(repository=DjangoORMCategoryRepository())
 
         try:

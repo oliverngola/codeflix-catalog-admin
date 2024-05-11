@@ -9,25 +9,22 @@ class CategoryOutput:
     description: str
     is_active: bool
 
-
-@dataclass
-class ListCategoryRequest:
-    pass
-
-
-@dataclass
-class ListCategoryResponse:
-    data: list[CategoryOutput]
-
-
 class ListCategory:
     def __init__(self, repository: CategoryRepository) -> None:
         self.repository = repository
 
-    def execute(self, request: ListCategoryRequest) -> ListCategoryResponse:
+    @dataclass
+    class Input:
+        pass
+
+    @dataclass
+    class Output:
+        data: list[CategoryOutput]
+
+    def execute(self, request: Input) -> Output:
         categories = self.repository.list()
 
-        return ListCategoryResponse(
+        return self.Output(
             data=[
                 CategoryOutput(
                     id=category.id,

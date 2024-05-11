@@ -1,7 +1,4 @@
-from src.core.category.application.use_cases.update_category import (
-    UpdateCategory,
-    UpdateCategoryRequest,
-)
+from src.core.category.application.use_cases.update_category import UpdateCategory
 from src.core.category.domain.category import Category
 from src.core.category.infra.in_memory_category_repository import (
     InMemoryCategoryRepository,
@@ -18,7 +15,7 @@ class TestUpdateCategory:
         repository.save(category=category)  # Usando o próprio repositório pra salvar
         use_case = UpdateCategory(repository=repository)
 
-        request = UpdateCategoryRequest(
+        request = UpdateCategory.Input(
             id=category.id,
             name="Séries",
             description="Séries de filmes",

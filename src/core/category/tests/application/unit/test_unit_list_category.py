@@ -4,9 +4,7 @@ import pytest
 from src.core.category.domain.category_repository import CategoryRepository
 from src.core.category.application.use_cases.list_category import (
     CategoryOutput,
-    ListCategory,
-    ListCategoryRequest,
-    ListCategoryResponse,
+    ListCategory
 )
 from src.core.category.domain.category import Category
 
@@ -50,9 +48,9 @@ class TestListCategory:
         mock_empty_repository: CategoryRepository,
     ) -> None:
         use_case = ListCategory(repository=mock_empty_repository)
-        response = use_case.execute(request=ListCategoryRequest())
+        output = use_case.execute(request=ListCategory.Input())
 
-        assert response == ListCategoryResponse(data=[])
+        assert output == ListCategory.Output(data=[])
 
     def test_when_categories_exist_then_return_mapped_list(
         self,
@@ -61,9 +59,9 @@ class TestListCategory:
         category_series: Category,
     ) -> None:
         use_case = ListCategory(repository=mock_populated_repository)
-        response = use_case.execute(request=ListCategoryRequest())
+        output = use_case.execute(request=ListCategory.Input())
 
-        assert response == ListCategoryResponse(
+        assert output == ListCategory.Output(
             data=[
                 CategoryOutput(
                     id=category_movie.id,

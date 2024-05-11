@@ -4,17 +4,17 @@ from uuid import UUID
 from src.core.category.domain.category_repository import CategoryRepository
 from src.core.category.application.use_cases.exceptions import CategoryNotFound
 
-
-@dataclass
-class DeleteCategoryRequest:
-    id: UUID
-
 class DeleteCategory:
     def __init__(self, repository: CategoryRepository):
         self.repository = repository
 
-    def execute(self, request: DeleteCategoryRequest) -> None:
-        category = self.repository.get_by_id(id=request.id)
+    
+    @dataclass
+    class Input:
+        id: UUID
+
+    def execute(self, input: Input) -> None:
+        category = self.repository.get_by_id(id=input.id)
         if category is None:
-            raise CategoryNotFound(f"Category with {request.id} not found")
+            raise CategoryNotFound(f"Category with {input.id} not found")
         self.repository.delete(id=category.id)

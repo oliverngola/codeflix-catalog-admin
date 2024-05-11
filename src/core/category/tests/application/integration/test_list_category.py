@@ -1,9 +1,7 @@
 import pytest
 from src.core.category.application.use_cases.list_category import (
     CategoryOutput,
-    ListCategory,
-    ListCategoryRequest,
-    ListCategoryResponse,
+    ListCategory
 )
 from src.core.category.domain.category import Category
 from src.core.category.infra.in_memory_category_repository import (
@@ -29,9 +27,9 @@ class TestListCategory:
     def test_when_no_categories_then_return_empty_list(self) -> None:
         empty_repository = InMemoryCategoryRepository()
         use_case = ListCategory(repository=empty_repository)
-        response = use_case.execute(request=ListCategoryRequest())
+        output = use_case.execute(request=ListCategory.Input())
 
-        assert response == ListCategoryResponse(data=[])
+        assert output == ListCategory.Output(data=[])
 
     def test_when_categories_exist_then_return_mapped_list(
         self,
@@ -43,9 +41,9 @@ class TestListCategory:
         repository.save(category=category_series)
 
         use_case = ListCategory(repository=repository)
-        response = use_case.execute(request=ListCategoryRequest())
+        output = use_case.execute(request=ListCategory.Input())
 
-        assert response == ListCategoryResponse(
+        assert output == ListCategory.Output(
             data=[
                 CategoryOutput(
                     id=category_movie.id,

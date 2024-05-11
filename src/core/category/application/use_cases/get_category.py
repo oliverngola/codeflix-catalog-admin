@@ -4,26 +4,27 @@ from uuid import UUID
 from src.core.category.domain.category_repository import CategoryRepository
 from src.core.category.application.use_cases.exceptions import CategoryNotFound
 
-@dataclass
-class GetCategoryRequest:
-    id: UUID
-
-@dataclass
-class GetCategoryResponse:
-    id: UUID
-    name: str
-    description: str
-    is_active: bool
 
 class GetCategory:
     def __init__(self, repository: CategoryRepository):
         self.repository = repository
 
-    def execute(self, request: GetCategoryRequest) -> GetCategoryResponse:
-        category = self.repository.get_by_id(id=request.id)
+    @dataclass
+    class Input:
+        id: UUID
+
+    @dataclass
+    class Output:
+        id: UUID
+        name: str
+        description: str
+        is_active: bool
+
+    def execute(self, input: Input) -> Output:
+        category = self.repository.get_by_id(id=input.id)
         if category is None:
-            raise CategoryNotFound(f"Category with {request.id} not found")
-        return GetCategoryResponse(
+            raise CategoryNotFound(f"Category with {input.id} not found")
+        return self.Output(
             id=category.id,
             name=category.name,
             description=category.description,

@@ -53,7 +53,7 @@ class TestCreateGenre:
         category_id = uuid.uuid4()
         input = CreateGenre.Input(
             name="Action", 
-            category_ids={category_id}
+            categories={category_id}
         )
         
         with pytest.raises(RelatedCategoriesNotFound) as exc_info:
@@ -73,7 +73,7 @@ class TestCreateGenre:
         )
         input = CreateGenre.Input(
             name="", 
-            category_ids={movie_category.id}
+            categories={movie_category.id}
         )
         
         with pytest.raises(InvalidGenre, match="name cannot be empty") as exc_info:
@@ -92,7 +92,7 @@ class TestCreateGenre:
         )
         input = CreateGenre.Input(
             name="Romance", 
-            category_ids={movie_category.id, documentary_category.id},
+            categories={movie_category.id, documentary_category.id},
         )
         output = use_case.execute(input)
 

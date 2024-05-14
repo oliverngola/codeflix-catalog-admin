@@ -15,8 +15,8 @@ from src.core.category.application.use_cases.exceptions import CategoryNotFound
 from src.core.category.application.use_cases.get_category import GetCategory
 from src.core.category.application.use_cases.list_category import ListCategory
 from src.core.category.application.use_cases.update_category import UpdateCategory
-from django_project.category_app.repository import DjangoORMCategoryRepository
-from django_project.category_app.serializers import (
+from src.django_project.category_app.repository import DjangoORMCategoryRepository
+from src.django_project.category_app.serializers import (
     CreateCategoryRequestSerializer,
     CreateCategoryResponseSerializer,
     DeleteCategoryRequestSerializer,

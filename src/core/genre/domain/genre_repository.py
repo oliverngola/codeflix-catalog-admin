@@ -6,7 +6,7 @@ from src.core.genre.domain.genre import Genre
 
 class GenreRepository(ABC):
     @abstractmethod
-    def get_by_id(self, id) -> Genre | None:
+    def get_by_id(self, id: UUID) -> Genre | None:
         raise NotImplementedError
 
     @abstractmethod

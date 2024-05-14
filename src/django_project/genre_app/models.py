@@ -13,3 +13,6 @@ class Genre(models.Model):
 
     class Meta:
         db_table = 'genres'
+
+    def __str__(self) -> str:
+        return self.name

@@ -6,15 +6,18 @@ from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND
 )
 
-from src.core.category.application.use_cases.create_category import CreateCategory
-from src.core.category.application.use_cases.delete_category import DeleteCategory
-from src.core.category.application.use_cases.exceptions import CategoryNotFound
-from src.core.category.application.use_cases.get_category import GetCategory
-from src.core.category.application.use_cases.list_category import ListCategory
-from src.core.category.application.use_cases.update_category import UpdateCategory
+from src.core.category.application.use_cases import (
+    CreateCategory,
+    DeleteCategory,
+    GetCategory,
+    ListCategory,
+    UpdateCategory
+)
+from src.core.category.application.use_cases.exceptions import CategoryNotFound, InvalidCategory
 from src.django_project.category_app.repository import DjangoORMCategoryRepository
 from src.django_project.category_app.serializers import (
     CreateCategoryRequestSerializer,
@@ -46,7 +49,10 @@ class CategoryViewSet(viewsets.ViewSet):
         try:
             output = use_case.execute(GetCategory.Input(id=serializer.validated_data["id"]))
         except CategoryNotFound:
-            return Response(status=HTTP_404_NOT_FOUND)
+            return Response(
+                status=HTTP_404_NOT_FOUND,
+                data={"error": f"Category with id {pk} not found"},
+            )
 
         category_output = RetrieveCategoryResponseSerializer(instance=output)
 
@@ -58,7 +64,13 @@ class CategoryViewSet(viewsets.ViewSet):
 
         use_case = CreateCategory(repository=DjangoORMCategoryRepository())
         
-        output = use_case.execute(CreateCategory.Input(**serializer.validated_data))
+        try:
+            output = use_case.execute(CreateCategory.Input(**serializer.validated_data))
+        except InvalidCategory as error:
+            return Response(
+                status=HTTP_400_BAD_REQUEST,
+                data={"error": str(error)},
+            )
 
         category_output = CreateCategoryResponseSerializer(instance=output)
         return Response(status=HTTP_201_CREATED,data=category_output.data)
@@ -73,7 +85,10 @@ class CategoryViewSet(viewsets.ViewSet):
         try:
             use_case.execute(input)
         except CategoryNotFound:
-            return Response(status=HTTP_404_NOT_FOUND)
+            return Response(
+                status=HTTP_404_NOT_FOUND,
+                data={"error": f"Category with id {pk} not found"},
+            )
 
         return Response(status=HTTP_204_NO_CONTENT)
     
@@ -86,10 +101,14 @@ class CategoryViewSet(viewsets.ViewSet):
 
         input = UpdateCategory.Input(**serializer.validated_data)
         use_case = UpdateCategory(repository=DjangoORMCategoryRepository())
+        
         try:
             use_case.execute(input)
         except CategoryNotFound:
-            return Response(status=HTTP_404_NOT_FOUND)
+            return Response(
+                status=HTTP_404_NOT_FOUND,
+                data={"error": f"Category with id {pk} not found"},
+            )
 
         return Response(status=HTTP_204_NO_CONTENT)
     
@@ -103,6 +122,9 @@ class CategoryViewSet(viewsets.ViewSet):
         try:
             use_case.execute(input)
         except CategoryNotFound:
-            return Response(status=HTTP_404_NOT_FOUND)
+            return Response(
+                status=HTTP_404_NOT_FOUND,
+                data={"error": f"Category with id {pk} not found"},
+            )
 
         return Response(status=HTTP_204_NO_CONTENT)

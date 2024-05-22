@@ -21,7 +21,7 @@ class ListCategory:
     class Output:
         data: list[CategoryOutput]
 
-    def execute(self, request: Input) -> Output:
+    def execute(self, input: Input) -> Output:
         categories = self.repository.list()
 
         return self.Output(

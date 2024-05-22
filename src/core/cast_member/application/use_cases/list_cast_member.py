@@ -21,7 +21,7 @@ class ListCastMember:
     class Output:
         data: list[CastMemberOutput]
 
-    def execute(self, request: Input) -> Output:
+    def execute(self, input: Input) -> Output:
         cast_members = self.repository.list()
 
         return self.Output(

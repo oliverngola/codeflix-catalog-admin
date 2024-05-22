@@ -22,16 +22,14 @@ class UpdateCategory:
             raise CategoryNotFound(f"Category with {input.id} not found")
 
         try:
-            current_name = input.name if input.name is not None else category.name
-            current_description =  input.description if input.description is not None else category.description
-            category.update_category(name=current_name, description=current_description)
-
             if input.is_active is True:
                 category.activate()
 
             if input.is_active is False:
                 category.deactivate()
 
+            current_name = input.name if input.name is not None else category.name
+            current_description =  input.description if input.description is not None else category.description
             category.update_category(name=current_name, description=current_description)
         except ValueError as error:
             raise InvalidCategory(error)

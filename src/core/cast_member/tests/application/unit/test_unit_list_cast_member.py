@@ -48,7 +48,7 @@ class TestListCastMember:
         mock_empty_repository: CastMemberRepository,
     ) -> None:
         use_case = ListCastMember(repository=mock_empty_repository)
-        output = use_case.execute(request=ListCastMember.Input())
+        output = use_case.execute(input=ListCastMember.Input())
 
         assert output == ListCastMember.Output(data=[])
 
@@ -59,7 +59,7 @@ class TestListCastMember:
         cast_member_willian: CastMember,
     ) -> None:
         use_case = ListCastMember(repository=mock_populated_repository)
-        output = use_case.execute(request=ListCastMember.Input())
+        output = use_case.execute(input=ListCastMember.Input())
 
         assert output == ListCastMember.Output(
             data=[

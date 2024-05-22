@@ -48,7 +48,7 @@ class TestListCategory:
         mock_empty_repository: CategoryRepository,
     ) -> None:
         use_case = ListCategory(repository=mock_empty_repository)
-        output = use_case.execute(request=ListCategory.Input())
+        output = use_case.execute(input=ListCategory.Input())
 
         assert output == ListCategory.Output(data=[])
 
@@ -59,7 +59,7 @@ class TestListCategory:
         category_series: Category,
     ) -> None:
         use_case = ListCategory(repository=mock_populated_repository)
-        output = use_case.execute(request=ListCategory.Input())
+        output = use_case.execute(input=ListCategory.Input())
 
         assert output == ListCategory.Output(
             data=[

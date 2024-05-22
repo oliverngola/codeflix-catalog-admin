@@ -27,7 +27,7 @@ class TestListCategory:
     def test_when_no_categories_then_return_empty_list(self) -> None:
         empty_repository = InMemoryCategoryRepository()
         use_case = ListCategory(repository=empty_repository)
-        output = use_case.execute(request=ListCategory.Input())
+        output = use_case.execute(input=ListCategory.Input())
 
         assert output == ListCategory.Output(data=[])
 
@@ -41,7 +41,7 @@ class TestListCategory:
         repository.save(category=category_series)
 
         use_case = ListCategory(repository=repository)
-        output = use_case.execute(request=ListCategory.Input())
+        output = use_case.execute(input=ListCategory.Input())
 
         assert output == ListCategory.Output(
             data=[

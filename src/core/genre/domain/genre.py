@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 from typing import Set
 from uuid import UUID, uuid4
 
+from src.core._shared.notification import Notification
+
 @dataclass
 class Genre:
     name: str
@@ -9,15 +11,20 @@ class Genre:
     categories: set[UUID] = field(default_factory=set)
     id: UUID = field(default_factory=uuid4)
 
+    notification: Notification = field(default_factory=Notification)
+
     def __post_init__(self):
         self.validate()
 
     def validate(self):
         if len(self.name) > 255:
-            raise ValueError("name cannot be longer than 255")
+            self.notification.add_error("name cannot be longer than 255")
         
         if not self.name:
-            raise ValueError("name cannot be empty")
+            self.notification.add_error("name cannot be empty")
+
+        if self.notification.has_errors:
+            raise ValueError(self.notification.messages)
 
     def __str__(self):
         return f"{self.name} - {self.is_active}" 

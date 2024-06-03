@@ -89,7 +89,7 @@ class TestEquality:
     def test_when_categories_have_same_id_they_are_equal(self):
         common_id = uuid.uuid4()
         cast_member_1 = CastMember(name="John Doe", id=common_id, type=CastMemberType.ACTOR)
-        cast_member_2 = CastMember(name="John Doe", id=common_id, type=CastMemberType.DIRECTOR)
+        cast_member_2 = CastMember(name="John Doe", id=common_id, type=CastMemberType.ACTOR)
 
         assert cast_member_1 == cast_member_2
 

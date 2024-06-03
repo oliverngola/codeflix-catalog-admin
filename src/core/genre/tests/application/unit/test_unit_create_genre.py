@@ -130,6 +130,6 @@ class TestCreateGenre:
                 id=output.id,
                 name="Romance",
                 is_active=True,
-                categories={}
+                categories=set()
             )
         )

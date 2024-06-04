@@ -1,6 +1,8 @@
 import pytest
 from rest_framework.test import APIClient
 
+from src.config import DEFAULT_PAGINATION_SIZE
+
 
 @pytest.fixture
 def api_client() -> APIClient:
@@ -11,7 +13,14 @@ def api_client() -> APIClient:
 class TestCreateAndEditCastMember:
     def test_user_can_create_and_edit_cast_member(self, api_client: APIClient) -> None:
         list_response = api_client.get("/api/cast_members/")
-        assert list_response.data == {"data": []}
+        assert list_response.data == {
+            "data": [],
+            "meta": {
+                "current_page": 1,
+                "per_page": DEFAULT_PAGINATION_SIZE,
+                "total": 0,
+            }
+        }
 
         # Cria um cast member
         create_response = api_client.post(
@@ -32,7 +41,12 @@ class TestCreateAndEditCastMember:
                     "name": "John Doe",
                     "type": "DIRECTOR"
                 }
-            ]
+            ],
+             "meta": {
+                "current_page": 1,
+                "per_page": DEFAULT_PAGINATION_SIZE,
+                "total": 1
+            }
         }
 
         # Edita cast member criada

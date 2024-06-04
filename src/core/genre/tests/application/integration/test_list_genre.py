@@ -1,3 +1,4 @@
+from src.core._shared.application.list import ListOutputMeta
 from src.core.category.domain.category import Category
 from src.core.category.infra.in_memory_category_repository import InMemoryCategoryRepository
 from src.core.genre.application.use_cases.list_genre import GenreOutput, ListGenre
@@ -31,7 +32,12 @@ class TestListGenre:
                     is_active=True,
                     categories={movie_category.id, documentary_category.id}
                 )
-            ]
+            ],
+            meta=ListOutputMeta(
+                current_page=1,
+                per_page=2,
+                total=1,
+            ),
         )
 
     def test_list_genres_without_category(self):
@@ -53,5 +59,10 @@ class TestListGenre:
                     is_active=True,
                     categories=set({})
                 )
-            ]
+            ],
+            meta=ListOutputMeta(
+                current_page=1,
+                per_page=2,
+                total=1,
+            ),
         )

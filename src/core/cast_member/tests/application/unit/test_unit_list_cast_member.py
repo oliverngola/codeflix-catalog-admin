@@ -1,6 +1,7 @@
 from unittest.mock import create_autospec
 
 import pytest
+from src.core._shared.application.list import ListOutputMeta
 from src.core.cast_member.domain.cast_member_repository import CastMemberRepository
 from src.core.cast_member.application.use_cases.list_cast_member import (
     CastMemberOutput,
@@ -73,5 +74,10 @@ class TestListCastMember:
                     name=cast_member_willian.name,
                     type=cast_member_willian.type
                 ),
-            ]
+            ],
+            meta=ListOutputMeta(
+                current_page=1,
+                per_page=2,
+                total=2,
+            ),
         )

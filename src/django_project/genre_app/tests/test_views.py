@@ -2,9 +2,9 @@ from uuid import UUID, uuid4
 import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
+
 from src.core.category.domain.category import Category
 from src.core.genre.domain.genre import Genre
-
 from src.django_project.category_app.repository import DjangoORMCategoryRepository
 from src.django_project.genre_app.repository import DjangoORMGenreRepository
 
@@ -73,41 +73,23 @@ class TestListAPI:
         url = "/api/genres/"
         response = APIClient().get(url)
 
-        # TODO: Quando implementarmos ordenação, poderemos comparar expected_data
-        # expected_data = {
-        #     "data": [
-        #         {
-        #             "id": str(genre_romance.id),
-        #             "name": "Romance",
-        #             "is_active": True,
-        #             "categories": [
-        #                 str(category_documentary.id),
-        #                 str(category_movie.id),
-        #             ],
-        #         },
-        #         {
-        #             "id": str(genre_drama.id),
-        #             "name": "Drama",
-        #             "is_active": True,
-        #             "categories": [],
-        #         },
-        #     ]
-        # }
-
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["data"]
-        assert response.data["data"][0]["id"] == str(genre_romance.id)
-        assert response.data["data"][0]["name"] == "Romance"
+        assert response.data["data"][0]["id"] == str(genre_drama.id)
+        assert response.data["data"][0]["name"] == "Drama"
         assert response.data["data"][0]["is_active"] is True
-        assert set(response.data["data"][0]["categories"]) == {
+        assert response.data["data"][0]["categories"] == []
+        assert response.data["data"][1]["id"] == str(genre_romance.id)
+        assert response.data["data"][1]["name"] == "Romance"
+        assert response.data["data"][1]["is_active"] is True
+        assert set(response.data["data"][1]["categories"]) == {
             str(category_documentary.id),
             str(category_movie.id),
         }
-        assert response.data["data"][1]["id"] == str(genre_drama.id)
-        assert response.data["data"][1]["name"] == "Drama"
-        assert response.data["data"][1]["is_active"] is True
-        assert response.data["data"][1]["categories"] == []
-
+        assert response.data["meta"] == {
+            "current_page": 1,
+            "per_page": 2, 
+            "total": 2
+        }
 
 @pytest.mark.django_db
 class TestCreateAPI:

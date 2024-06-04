@@ -34,14 +34,16 @@ from src.django_project.genre_app.serializers import (
 
 class GenreViewSet(viewsets.ViewSet):
     def list(self, request: Request) -> Response:
+        order_by = request.query_params.get("order_by", "name")
         use_case = ListGenre(repository=DjangoORMGenreRepository())
-        output: ListGenre.Input = use_case.execute(ListGenre.Input())
-        response_serializer = ListGenreOutputSerializer(output)
-
-        return Response(
-            status=HTTP_200_OK,
-            data=response_serializer.data,
+        input = ListGenre.Input(
+            order_by=order_by,
+            current_page=int(request.query_params.get("current_page", 1)),
         )
+        output = use_case.execute(input)
+        serializer = ListGenreOutputSerializer(instance=output)
+
+        return Response(status=HTTP_200_OK, data=serializer.data)
 
     def create(self, request: Request) -> Response:
         serializer = CreateGenreInputSerializer(data=request.data)

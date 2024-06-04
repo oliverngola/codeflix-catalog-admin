@@ -1,11 +1,10 @@
-from uuid import UUID, uuid4
-from django.test import override_settings
-from django.urls import reverse
 import pytest
+from uuid import UUID, uuid4
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from src.core.cast_member.domain.cast_member import CastMember, CastMemberType
 
+from src.core.cast_member.domain.cast_member import CastMember, CastMemberType
 from src.django_project.cast_member_app.repository import DjangoORMCastMemberRepository
 
 
@@ -56,7 +55,12 @@ class TestListAPI:
                     "name": "John Krasinski",
                     "type": "DIRECTOR",
                 },
-            ]
+            ],
+            "meta": {
+                "current_page": 1,
+                "per_page": 2,
+                "total": 2
+            }
         }
 
         assert response.status_code == status.HTTP_200_OK

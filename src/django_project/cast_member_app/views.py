@@ -33,14 +33,16 @@ from src.django_project.cast_member_app.serializers import (
 
 class CastMemberViewSet(viewsets.ViewSet):
     def list(self, request: Request) -> Response:
+        order_by = request.query_params.get("order_by", "name")
         use_case = ListCastMember(repository=DjangoORMCastMemberRepository())
-        output: ListCastMember.Output = use_case.execute(input=ListCastMember.Input())
-        response_serializer = ListCastMemberResponseSerializer(output)
-
-        return Response(
-            status=HTTP_200_OK,
-            data=response_serializer.data,
+        input = ListCastMember.Input(
+            order_by=order_by,
+            current_page=int(request.query_params.get("current_page", 1)),
         )
+        output = use_case.execute(input)
+        serializer = ListCastMemberResponseSerializer(instance=output)
+
+        return Response(status=HTTP_200_OK, data=serializer.data)
 
     def create(self, request: Request) -> Response:
         serializer = CreateCastMemberRequestSerializer(data=request.data)

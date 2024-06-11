@@ -35,10 +35,10 @@ def cast_member_repository():
 
 @pytest.fixture
 def use_case(
-        category_repository: InMemoryCategoryRepository,
-        video_repository: InMemoryVideoRepository,
-        genre_repository: InMemoryGenreRepository,
-        cast_member_repository: InMemoryCastMemberRepository,
+    category_repository: InMemoryCategoryRepository,
+    video_repository: InMemoryVideoRepository,
+    genre_repository: InMemoryGenreRepository,
+    cast_member_repository: InMemoryCastMemberRepository,
 ) -> CreateVideoWithoutMedia:
     return CreateVideoWithoutMedia(
         video_repository=video_repository,
@@ -50,10 +50,10 @@ def use_case(
 
 class TestCreateVideoWithoutMedia:
     def test_create_video_without_media_with_associated_categories(
-            self,
-            use_case: CreateVideoWithoutMedia,
-            category_repository: InMemoryCategoryRepository,
-            video_repository: InMemoryVideoRepository,
+        self,
+        use_case: CreateVideoWithoutMedia,
+        category_repository: InMemoryCategoryRepository,
+        video_repository: InMemoryVideoRepository,
     ) -> None:
         category_repository.save(Category(name="Category 1", description="Category 1 description"))
         category_repository.save(Category(name="Category 2", description="Category 2 description"))
@@ -77,7 +77,7 @@ class TestCreateVideoWithoutMedia:
         assert created_video.title == "Video 1"
         assert created_video.description == "Video 1 description"
         assert created_video.launch_year == 2022
-        assert created_video.opened
+        assert created_video.opened is True
         assert created_video.duration == Decimal(120)
         assert created_video.rating == Rating.L
         assert created_video.categories == {cat.id for cat in category_repository.list()}

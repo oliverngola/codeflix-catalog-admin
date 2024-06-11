@@ -11,7 +11,10 @@ class Notification:
         self._errors.append(error)
 
     def add_errors(self, errors: list[str]) -> None:
-        self._errors.extend(errors)
+        if errors is not None:
+            for error in errors:
+                self.add_error(error)
+        # self._errors.extend(errors)
 
     @property
     def messages(self) -> str:

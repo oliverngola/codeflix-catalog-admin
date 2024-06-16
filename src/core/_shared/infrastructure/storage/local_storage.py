@@ -19,3 +19,9 @@ class LocalStorage(AbstractStorage):
 
         with open(full_path, "wb") as file:
             file.write(content)
+
+        return full_path.as_uri()
+
+    def retrieve(self, file_path: Path) -> bytes:
+        with open(self.bucket.joinpath(file_path), "rb") as file:
+            return file.read()

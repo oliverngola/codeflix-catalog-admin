@@ -18,6 +18,7 @@ class DjangoORMVideoRepository(VideoRepository):
                 opened=video.opened,
                 duration=video.duration,
                 rating=video.rating,
+                published=video.published,
             )
             video_model.categories.set(video.categories)
             video_model.genres.set(video.genres)
@@ -54,6 +55,7 @@ class DjangoORMVideoRepository(VideoRepository):
                 opened=video_model.opened,
                 duration=video_model.duration,
                 rating=video_model.rating,
+                published=video_model.published,
                 categories=set(video_model.categories.values_list("id", flat=True)),
                 genres=set(video_model.genres.values_list("id", flat=True)),
                 cast_members=set(video_model.cast_members.values_list("id", flat=True)),

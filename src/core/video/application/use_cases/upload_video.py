@@ -44,4 +44,4 @@ class UploadVideo:
 
         video.update_video_media(audio_video_media)
 
-        self.repository.save(video)
+        self.repository.update(video)

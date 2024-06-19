@@ -9,7 +9,6 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND
 )
-
 from src.core.category.application.use_cases import (
     CreateCategory,
     DeleteCategory,
@@ -28,6 +27,7 @@ from src.django_project.category_app.serializers import (
     RetrieveCategoryResponseSerializer,
     UpdateCategoryRequestSerializer
 )
+
 
 class CategoryViewSet(viewsets.ViewSet):
     def list(self, request: Request) -> Response:
@@ -91,6 +91,11 @@ class CategoryViewSet(viewsets.ViewSet):
                 status=HTTP_404_NOT_FOUND,
                 data={"error": f"Category with id {pk} not found"},
             )
+        except InvalidCategory as error:
+            return Response(
+                status=HTTP_400_BAD_REQUEST,
+                data={"error": str(error)},
+            )
 
         return Response(status=HTTP_204_NO_CONTENT)
     
@@ -110,6 +115,11 @@ class CategoryViewSet(viewsets.ViewSet):
             return Response(
                 status=HTTP_404_NOT_FOUND,
                 data={"error": f"Category with id {pk} not found"},
+            )
+        except InvalidCategory as error:
+            return Response(
+                status=HTTP_400_BAD_REQUEST,
+                data={"error": str(error)},
             )
 
         return Response(status=HTTP_204_NO_CONTENT)

@@ -1,5 +1,4 @@
 from uuid import UUID
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -50,14 +49,21 @@ class CastMemberViewSet(viewsets.ViewSet):
 
         input = CreateCastMember.Input(**serializer.validated_data)
         use_case = CreateCastMember(repository=DjangoORMCastMemberRepository())
-        output = use_case.execute(input)
+
+        try:
+            output = use_case.execute(input)
+        except InvalidCastMember as error:
+            return Response(
+                status=HTTP_400_BAD_REQUEST,
+                data={"error": str(error)},
+            )
 
         return Response(
             status=HTTP_201_CREATED,
             data=CreateCastMemberResponseSerializer(output).data,
         )
 
-    def update(self, request: Request, pk: UUID = None):
+    def update(self, request: Request, pk: UUID = None) -> Response:
         serializer = UpdateCastMemberRequestSerializer(data={
             **request.data,
             "id": pk,
@@ -78,7 +84,7 @@ class CastMemberViewSet(viewsets.ViewSet):
 
         return Response(status=HTTP_204_NO_CONTENT)
 
-    def destroy(self, request: Request, pk: UUID = None):
+    def destroy(self, request: Request, pk: UUID = None) -> Response:
         request_data = DeleteCastMemberRequestSerializer(data={"id": pk})
         request_data.is_valid(raise_exception=True)
 
@@ -87,6 +93,9 @@ class CastMemberViewSet(viewsets.ViewSet):
         try:
             use_case.execute(input)
         except CastMemberNotFound:
-            return Response(status=HTTP_404_NOT_FOUND)
+            return Response(
+                status=HTTP_404_NOT_FOUND,
+                data={"error": f"CastMember with id {pk} not found"},
+            )
 
         return Response(status=HTTP_204_NO_CONTENT)

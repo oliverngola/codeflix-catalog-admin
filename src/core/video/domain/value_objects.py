@@ -18,6 +18,11 @@ class MediaStatus(StrEnum):
     PROCESSING = "PROCESSING"
     COMPLETED = "COMPLETED"
     ERROR = "ERROR"
+    
+@unique
+class MediaType(StrEnum):
+    VIDEO = "VIDEO"
+    TRAILER = "TRAILER"
 
 
 @dataclass(frozen=True)
@@ -32,3 +37,4 @@ class AudioVideoMedia:
     raw_location: str
     encoded_location: str
     status: MediaStatus
+    media_type: MediaType

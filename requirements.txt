@@ -12,6 +12,7 @@ matplotlib-inline==0.1.7
 packaging==24.0
 parso==0.8.4
 pexpect==4.9.0
+pika==1.3.2
 pluggy==1.4.0
 prompt-toolkit==3.0.43
 ptyprocess==0.7.0

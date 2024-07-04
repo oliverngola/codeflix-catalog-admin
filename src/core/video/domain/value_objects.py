@@ -23,6 +23,9 @@ class MediaStatus(StrEnum):
 class MediaType(StrEnum):
     VIDEO = "VIDEO"
     TRAILER = "TRAILER"
+    BANNER = "BANNER"
+    THUMBNAIL = "THUMBNAIL"
+    THUMBNAIL_HALF = "THUMBNAIL_HALF"
 
 
 @dataclass(frozen=True)

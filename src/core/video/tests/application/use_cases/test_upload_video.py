@@ -7,7 +7,7 @@ import pytest
 from src.core._shared.infrastructure.storage.abstract_storage import AbstractStorage
 from src.core.video.application.use_cases.exceptions import VideoNotFound
 from src.core.video.application.use_cases.upload_video import UploadVideo
-from src.core.video.domain.value_objects import AudioVideoMedia, MediaStatus, Rating
+from src.core.video.domain.value_objects import AudioVideoMedia, MediaStatus, MediaType, Rating
 from src.core.video.domain.video import Video
 from src.core.video.infra.in_memory_video_repository import InMemoryVideoRepository
 
@@ -52,6 +52,7 @@ class TestUploadVideo:
             raw_location=f"videos/{video.id}/video.mp4",
             encoded_location="",
             status=MediaStatus.PENDING,
+            media_type=MediaType.VIDEO,
         )
         assert video_repository.videos[0] == video
 

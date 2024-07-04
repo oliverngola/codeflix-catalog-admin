@@ -3,7 +3,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from src.core._shared.domain.entity import Entity
-from src.core.video.domain.events.event import AudioVideoMediaUpdated
+from src.core.video.domain.events.events import AudioVideoMediaUpdated
 from src.core.video.domain.value_objects import MediaType, Rating, ImageMedia, AudioVideoMedia, MediaStatus
 
 

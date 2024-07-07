@@ -5,11 +5,13 @@ import uuid
 
 import pytest
 from src.core._shared.infrastructure.storage.abstract_storage import AbstractStorage
+from src.core.video.application.events.integration_events import AudioVideoMediaUpdatedIntegrationEvent
 from src.core.video.application.use_cases.exceptions import VideoNotFound
 from src.core.video.application.use_cases.upload_video import UploadVideo
 from src.core.video.domain.value_objects import AudioVideoMedia, MediaStatus, MediaType, Rating
 from src.core.video.domain.video import Video
 from src.core.video.infra.in_memory_video_repository import InMemoryVideoRepository
+from src.core._shared.events.abstract_message_bus import AbstractMessageBus
 
 
 class TestUploadVideo:
@@ -28,9 +30,11 @@ class TestUploadVideo:
 
         video_repository = InMemoryVideoRepository(videos=[video])
         mock_storage = create_autospec(AbstractStorage)
+        mock_message_bus = create_autospec(AbstractMessageBus)
         use_case = UploadVideo(
             repository=video_repository,
             storage_service=mock_storage,
+            message_bus=mock_message_bus,
         )
 
         use_case.execute(
@@ -55,6 +59,12 @@ class TestUploadVideo:
             media_type=MediaType.VIDEO,
         )
         assert video_repository.videos[0] == video
+        mock_message_bus.handle.assert_called_once_with([
+            AudioVideoMediaUpdatedIntegrationEvent(
+                resource_id=f"{video.id}.{MediaType.VIDEO}",
+                file_path=f"videos/{video.id}/video.mp4"
+            )
+        ])
 
     def test_when_video_does_not_exist_then_raise_error(self):
         video_repository = InMemoryVideoRepository(videos=[])

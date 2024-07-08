@@ -7,6 +7,7 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
     HTTP_201_CREATED,
 )
+from src.core._shared.events.message_bus import MessageBus
 from src.core._shared.infrastructure.storage.local_storage import LocalStorage
 from src.core.video.application.use_cases.create_video_without_media import CreateVideoWithoutMedia
 from src.core.video.application.use_cases.exceptions import VideoNotFound
@@ -57,7 +58,8 @@ class VideoViewSet(viewsets.ViewSet):
 
         upload_video = UploadVideo(
             repository=DjangoORMVideoRepository(),
-            storage_service=LocalStorage()
+            storage_service=LocalStorage(),
+            message_bus=MessageBus()
         )
         try:
             upload_video.execute(

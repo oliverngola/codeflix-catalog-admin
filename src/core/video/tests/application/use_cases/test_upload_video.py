@@ -1,9 +1,8 @@
+import pytest, uuid
 from decimal import Decimal
 from pathlib import Path
 from unittest.mock import create_autospec
-import uuid
 
-import pytest
 from src.core._shared.infrastructure.storage.abstract_storage import AbstractStorage
 from src.core.video.application.events.integration_events import AudioVideoMediaUpdatedIntegrationEvent
 from src.core.video.application.use_cases.exceptions import VideoNotFound
@@ -69,9 +68,11 @@ class TestUploadVideo:
     def test_when_video_does_not_exist_then_raise_error(self):
         video_repository = InMemoryVideoRepository(videos=[])
         mock_storage = create_autospec(AbstractStorage)
+        mock_message_bus = create_autospec(AbstractMessageBus)
         use_case = UploadVideo(
             repository=video_repository,
             storage_service=mock_storage,
+            message_bus=mock_message_bus,
         )
 
         video_id = uuid.uuid4()

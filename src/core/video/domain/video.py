@@ -92,4 +92,12 @@ class Video(Entity):
         self.trailer = trailer
         self.validate()
     
+    def process(self, status: MediaStatus, encoded_location: str = "") -> None:
+        if status == MediaStatus.COMPLETED:
+            self.video = self.video.complete(encoded_location)
+            self.publish()
+        else:
+            self.video = self.video.fail()
+
+        self.validate()
 

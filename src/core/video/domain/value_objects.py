@@ -41,3 +41,21 @@ class AudioVideoMedia:
     encoded_location: str
     status: MediaStatus
     media_type: MediaType
+
+    def complete(self, encoded_location: str):
+        return AudioVideoMedia(
+            name=self.name,
+            raw_location=self.raw_location,
+            encoded_location=encoded_location,
+            status=MediaStatus.COMPLETED,
+            media_type=self.media_type,
+        )
+
+    def fail(self):
+        return AudioVideoMedia(
+            name=self.name,
+            raw_location=self.raw_location,
+            encoded_location=self.encoded_location,
+            status=MediaStatus.ERROR,
+            media_type=self.media_type,
+        )

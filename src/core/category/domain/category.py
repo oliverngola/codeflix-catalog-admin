@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from src.core._shared.domain.entity import Entity
 
-@dataclass
+@dataclass(eq=False)
 class Category(Entity):
     name: str
     description: str = ""

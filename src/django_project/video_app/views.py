@@ -12,6 +12,10 @@ from src.core._shared.infrastructure.storage.local_storage import LocalStorage
 from src.core.video.application.use_cases.create_video_without_media import CreateVideoWithoutMedia
 from src.core.video.application.use_cases.exceptions import VideoNotFound
 from src.core.video.application.use_cases.upload_video import UploadVideo
+from src.core.video.application.use_cases.list_video import ListVideo
+from src.django_project.cast_member_app.repository import DjangoORMCastMemberRepository
+from src.django_project.category_app.repository import DjangoORMCategoryRepository
+from src.django_project.genre_app.repository import DjangoORMGenreRepository
 from src.django_project.video_app.repository import DjangoORMVideoRepository
 from src.django_project.video_app.serializers import (
     ListVideoResponseSerializer,
@@ -23,24 +27,33 @@ from src.django_project.video_app.serializers import (
 
 class VideoViewSet(viewsets.ViewSet):
     def list(self, request: Request) -> Response:
-        # order_by = request.query_params.get("order_by", "name")
-        # use_case = ListVideo(repository=DjangoORMVideoRepository())
-        # input = ListVideo.Input(
-        #     order_by=order_by,
-        #     current_page=int(request.query_params.get("current_page", 1)),
-        # )
-        # output = use_case.execute(input)
-        # serializer = ListVideoResponseSerializer(instance=output)
+        order_by = request.query_params.get("order_by", "title")
+        use_case = ListVideo(
+            repository=DjangoORMVideoRepository(),
+            category_repository=DjangoORMCategoryRepository(),
+            cast_member_repository=DjangoORMCastMemberRepository(),
+            genre_repository=DjangoORMGenreRepository()
+        )
+        input = ListVideo.Input(
+            order_by=order_by,
+            current_page=int(request.query_params.get("current_page", 1)),
+        )
+        output = use_case.execute(input)
+        serializer = ListVideoResponseSerializer(instance=output)
 
-        # return Response(status=HTTP_200_OK, data=serializer.data)
-        raise NotImplementedError
+        return Response(status=HTTP_200_OK, data=serializer.data)
 
     def create(self, request: Request) -> Response:
         serializer = CreateVideoRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         input = CreateVideoWithoutMedia.Input(**serializer.validated_data)
-        use_case = CreateVideoWithoutMedia(repository=DjangoORMVideoRepository())
+        use_case = CreateVideoWithoutMedia(
+            video_repository=DjangoORMVideoRepository(),
+            category_repository=DjangoORMCategoryRepository(),
+            cast_member_repository=DjangoORMCastMemberRepository(),
+            genre_repository=DjangoORMGenreRepository()
+        )
         output = use_case.execute(input)
 
         return Response(

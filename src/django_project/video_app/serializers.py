@@ -42,6 +42,13 @@ class ListVideoResponseSerializer(serializers.Serializer):
     data = VideoResponseSerializer(many=True)
     meta = ListOutputMetaSerializer()
 
+class RetrieveVideoRequestSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+
+
+class RetrieveVideoResponseSerializer(serializers.Serializer):
+    data = VideoResponseSerializer(source="*")
+
 
 class SetField(serializers.ListField):
     # Outras alternativas:
@@ -72,3 +79,4 @@ class CreateVideoResponseSerializer(serializers.Serializer):
 
 class DeleteVideoRequestSerializer(serializers.Serializer):
     id = serializers.UUIDField()
+

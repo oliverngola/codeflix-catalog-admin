@@ -9,10 +9,13 @@ from rest_framework.status import (
 )
 from src.core._shared.events.message_bus import MessageBus
 from src.core._shared.infrastructure.storage.local_storage import LocalStorage
-from src.core.video.application.use_cases.create_video_without_media import CreateVideoWithoutMedia
 from src.core.video.application.use_cases.exceptions import VideoNotFound
-from src.core.video.application.use_cases.upload_video import UploadVideo
-from src.core.video.application.use_cases.list_video import ListVideo
+from src.core.video.application.use_cases import (
+    CreateVideoWithoutMedia,
+    ListVideo,
+    UploadVideo,
+    GetVideo,
+)
 from src.django_project.cast_member_app.repository import DjangoORMCastMemberRepository
 from src.django_project.category_app.repository import DjangoORMCategoryRepository
 from src.django_project.genre_app.repository import DjangoORMGenreRepository
@@ -22,6 +25,8 @@ from src.django_project.video_app.serializers import (
     CreateVideoRequestSerializer,
     DeleteVideoRequestSerializer,
     CreateVideoResponseSerializer,
+    RetrieveVideoRequestSerializer,
+    RetrieveVideoResponseSerializer,
 )
 
 
@@ -42,6 +47,29 @@ class VideoViewSet(viewsets.ViewSet):
         serializer = ListVideoResponseSerializer(instance=output)
 
         return Response(status=HTTP_200_OK, data=serializer.data)
+    
+    def retrieve(self, request: Request,  pk: UUID = None) -> Response:
+        serializer = RetrieveVideoRequestSerializer(data={"id": pk})
+        serializer.is_valid(raise_exception=True)
+        
+        use_case = GetVideo(
+            repository=DjangoORMVideoRepository(),
+            category_repository=DjangoORMCategoryRepository(),
+            cast_member_repository=DjangoORMCastMemberRepository(),
+            genre_repository=DjangoORMGenreRepository()
+        )
+
+        try:
+            output = use_case.execute(GetVideo.Input(id=serializer.validated_data["id"]))
+        except VideoNotFound:
+            return Response(
+                status=HTTP_404_NOT_FOUND,
+                data={"error": f"Video with id {pk} not found"},
+            )
+
+        video_output = RetrieveVideoResponseSerializer(instance=output)
+
+        return Response(status=HTTP_200_OK,data=video_output.data)
 
     def create(self, request: Request) -> Response:
         serializer = CreateVideoRequestSerializer(data=request.data)

@@ -67,7 +67,7 @@ class TestCreateVideoWithoutMedia:
                     "duration": 1,
                     "link": "",
                     "categories": [
-                    "Movie"
+                        created_category_id
                     ],
                     "genres": [],
                     "cast_members": [],

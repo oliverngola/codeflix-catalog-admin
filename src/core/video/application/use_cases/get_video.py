@@ -57,15 +57,15 @@ class GetVideo:
             rating=video.rating,
             link=video.video.raw_location if video.video else "",
             categories=[
-                self.category_repository.get_by_id(category).name
+                self.category_repository.get_by_id(category).id
                 for category in video.categories
             ],
             cast_members=[
-                self.cast_member_repository.get_by_id(cast_member).name
+                self.cast_member_repository.get_by_id(cast_member).id
                 for cast_member in video.cast_members
             ],
             genres=[
-                self.genre_repository.get_by_id(genre).name
+                self.genre_repository.get_by_id(genre).id
                 for genre in video.genres
             ],
             banner_file_url=video.banner.raw_location if video.banner else "",
